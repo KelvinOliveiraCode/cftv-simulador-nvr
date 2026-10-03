@@ -1,35 +1,55 @@
-# cftvsim
+<div align="center">
 
-Bancada de testes de CFTV simulada: 24 câmeras IP e um NVR em Python, com
-gravação, detecção de movimento, saúde do dispositivo e streaming RTSP
-simulado.
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/tests-43%20passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/coverage-95%25-brightgreen?style=flat-square" alt="Coverage">
+  <img src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
+</p>
 
-A simulated CFTV test bench: 24 IP cameras and an NVR in Python, with
-recording, motion detection, device health and simulated RTSP streaming.
+# cftv-simulador-nvr
 
-> **Nada aqui é real.** Nenhum stream de câmera é capturado. Os "vídeos" são
-> frames sintéticos gerados em memória — contadores com checksum, o suficiente
-> para detectar perda, duplicata e dessincronia sem gastar um byte com vídeo
-> de verdade.
+**Bancada de CFTV simulada: 24 cameras IP, um NVR em Python e 3 falhas plantadas com diagnostico proprio.**
 
-## O que é
+</div>
 
-Descoberta, autenticação, negociação de codec, gravação, reprodução e busca
-por horário, mais health check com disponibilidade, latência, perda de quadro,
-banda, temperatura e PoE. Três câmeras têm falha plantada, e o health check as
-detecta cada uma com seu diagnóstico.
+---
 
-## Por que foi feito
+## PT-BR
 
-É a bancada de testes do CFTV: validar o fluxo completo sem comprar nenhum
-equipamento. E o guia de bancada (`docs/como-validar-uma-camera-ip.md`) diz
-como testar uma câmera IP **antes** de instalar, na ordem correta.
+### O que e
 
-## Como rodar
+Bancada de testes de CFTV em Python: 24 cameras IP simuladas e um NVR que
+descobre, autentica, negocia codec, grava, reproduce e busca por horario, com
+health check de disponibilidade, latencia, perda de quadro, banda, temperatura
+e PoE. Tres cameras tem falha plantada e o health check detecta cada uma com o
+seu diagnostico.
+
+### Por que foi feito
+
+E a bancada de testes do CFTV: validar o fluxo completo sem comprar nenhum
+equipamento e sem tocar em camera de cliente. E o guia de bancada
+(`docs/como-validar-uma-camera-ip.md`) diz como testar uma camera IP **antes**
+de instalar, na ordem correta.
+
+### Como rodar
 
 ```powershell
+# 1. Instalar
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -e .
+
+# 2. Validar
+python -m pytest tests/ -v
+
+# 3. Executar
 python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-saude.md
 ```
+
+Saida real (o comando termina com codigo 1 porque ha cameras com problema):
 
 ```
 - CAM-07: COM PROBLEMA (camera-indisponivel)
@@ -37,89 +57,144 @@ python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-
 - CAM-19: COM PROBLEMA (relogio-deslocado)
 ...
 Resumo: 21 saudaveis, 3 com problema
+relatorio gravado em exemplos\relatorio-saude.md
 ```
 
-Instalação:
+Sem instalar nada, da raiz do repositorio:
 
 ```powershell
-pip install -e ".[dev]"
+$env:PYTHONPATH="$PWD\src"; python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-saude.md
 ```
 
-## As 3 falhas plantadas
+### As 3 falhas plantadas
 
-| Câmera | Falha | Como é detectada |
+| Camera | Falha | Como e detectada |
 |---|---|---|
-| CAM-07 | cai após 50 frames | ausência de heartbeat |
-| CAM-13 | pula 1 frame a cada 10 | quebra na sequência |
-| CAM-19 | relógio 5 min adiantado | carimbo fora da tolerância |
+| CAM-07 | cai apos 50 frames | ausencia de heartbeat |
+| CAM-13 | pula 1 frame a cada 10 | quebra na sequencia |
+| CAM-19 | relogio 5 min adiantado | carimbo fora da tolerancia |
 
-A CAM-19 é a mais instrutiva: a gravação funciona, o checksum confere, e só a
-busca por horário quebra — porque o índice diz que os quadros estão no futuro.
-Relógio é infraestrutura, não detalhe.
+A CAM-19 e a mais instrutiva: a gravacao funciona, o checksum confere, e so a
+busca por horario quebra, porque o indice diz que os quadros estao no futuro.
+Relogio e infraestrutura, nao detalhe.
 
-## O que aprendi
+### O que aprendi
 
-- **Comparar carimbo sintético com relógio de parede acusa tudo.** O check
-  original fazia isso e marcava as 24 câmeras. A referência tem de ser a base
+- **Comparar carimbo sintetico com relogio de parede acusa tudo.** O check
+  original fazia isso e marcava as 24 cameras. A referencia tem de ser a base
   que o NVR usou para pedir os frames.
-- **Perda se mede por buraco na sequência**, não por checksum. Quadro que não
-  existe não tem checksum para conferir.
-- **Health check que acusa tudo é tão inútil quanto um que não acusa nada.**
-- **Bloco sem `exit` é normal.** O parser usa indentação, não palavra-chave.
+- **Perda se mede por buraco na sequencia**, e nao por checksum. Quadro que nao
+  existe nao tem checksum para conferir.
+- **Health check que acusa tudo e tao inutil quanto um que nao acusa nada.**
+- **Bloco sem `exit` e normal.** O parser usa indentacao, nao palavra-chave.
 
-## Testes
+### Limitacoes
 
-```powershell
-python -m pytest -v
-```
-
-43 testes, 95% de cobertura. Cobrem a câmera e as 3 falhas, o NVR e a busca,
-o handshake em 4 fases, a saúde com cada diagnóstico isolado, e a CLI.
-
-```powershell
-python tools/verificar_aceite.py     # 24 no fluxo + 3 detectadas + saida 1
-python tools/verificar_encoding.py   # nenhum caractere corrompido
-```
-
-## Limitações
-
-- **Quadros sintéticos, não imagem.** Perda, duplicata e dessincronia sim;
-  qualidade de imagem, foco e infravermelho não.
-- **Sem rede real.** Latência é número no YAML, não medição; sem jitter nem
+- **Quadros sinteticos, nao imagem.** Perda, duplicata e dessincronia sim;
+  qualidade de imagem, foco e infravermelho nao.
+- **Sem rede real.** Latencia e numero no YAML, nao medicao: sem jitter e sem
   comportamento de switch sob carga.
-- **Sem movimento de verdade.** Detecção de movimento é variação de contador,
-  não análise de cena.
-- **Relógio simulado.** NTP real, deriva e fuso não existem aqui.
+- **Sem movimento de verdade.** Deteccao de movimento e variacao de contador,
+  nao analise de cena.
+- **Relogio simulado.** NTP real, deriva e fuso nao existem aqui.
 
-## Licença
+### Licenca
 
-MIT.
+MIT. Ver [LICENSE](LICENSE).
 
 ---
 
-## English
+## EN
 
-A simulated CFTV test bench: 24 IP cameras and an NVR, with recording, health
-checks and simulated RTSP. Synthetic frames (counters with checksums) — enough
-for loss, duplication and clock skew, no real video bytes.
+### What it is
 
-Three planted failures (drop, frame loss, wrong clock), each distinctly
-diagnosed. 21 healthy, 3 flagged, exit 1.
+A CFTV test bench in Python: 24 simulated IP cameras and an NVR that discovers,
+authenticates, negotiates the codec, records, plays back and searches by time,
+with health checks for availability, latency, frame loss, bandwidth, temperature
+and PoE. Three cameras carry a planted failure and the health check gives each
+one its own diagnosis.
 
-### Tests
+### Why it was built
 
-43 tests, 95% coverage.
+It is the CFTV test bench: validating the full flow without buying equipment and
+without touching a customer camera. The bench guide
+(`docs/como-validar-uma-camera-ip.md`) also explains how to test an IP camera
+**before** installing it, in the right order.
+
+### How to run
 
 ```powershell
-python -m pytest -v
-python tools/verificar_aceite.py
-python tools/verificar_encoding.py
+# 1. Install
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -e .
+
+# 2. Validate
+python -m pytest tests/ -v
+
+# 3. Run
+python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-saude.md
 ```
+
+Real output (the command exits with code 1 because some cameras have problems):
+
+```
+- CAM-07: COM PROBLEMA (camera-indisponivel)
+- CAM-13: COM PROBLEMA (perda-de-quadro)
+- CAM-19: COM PROBLEMA (relogio-deslocado)
+...
+Resumo: 21 saudaveis, 3 com problema
+relatorio gravado em exemplos\relatorio-saude.md
+```
+
+Without installing anything, from the repository root:
+
+```powershell
+$env:PYTHONPATH="$PWD\src"; python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-saude.md
+```
+
+### The 3 planted failures
+
+| Camera | Failure | How it is detected |
+|---|---|---|
+| CAM-07 | drops after 50 frames | missing heartbeat |
+| CAM-13 | skips 1 frame every 10 | break in the sequence |
+| CAM-19 | clock 5 min ahead | timestamp outside tolerance |
+
+CAM-19 is the most instructive one: recording works, the checksum matches, and
+only the time search breaks, because the index says the frames are in the
+future. A clock is infrastructure, not a detail.
+
+### What I learned
+
+- **Comparing a synthetic timestamp against the wall clock flags everything.**
+  The original check did that and marked all 24 cameras. The reference has to
+  be the base the NVR used to request the frames.
+- **Loss is measured by the hole in the sequence**, not by the checksum. A frame
+  that does not exist has no checksum to verify.
+- **A health check that flags everything is as useless as one that flags
+  nothing.**
+- **A block without `exit` is normal.** The parser uses indentation, not a
+  keyword.
 
 ### Limitations
 
-Synthetic frames; no real network, motion detection, or clock behavior.
+- **Synthetic frames, not images.** Loss, duplication and desync are simulated;
+  image quality, focus and infrared are not.
+- **No real network.** Latency is a number in the YAML, not a measurement: no
+  jitter, no switch behaviour under load.
+- **No real motion.** Motion detection is a counter variation, not scene
+  analysis.
+- **Simulated clock.** Real NTP, drift and time zone do not exist here.
 
 ### License
 
-MIT.
+MIT. See [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+  <sub>Por <a href="https://github.com/KelvinOliveiraCode">Kelvin Oliveira</a> &middot;
+  <a href="https://kelvinoliveiracode.github.io/portfolio/">portfolio</a></sub>
+</div>
