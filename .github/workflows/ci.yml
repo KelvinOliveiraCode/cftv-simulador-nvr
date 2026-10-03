@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Conferir encoding dos arquivos de texto
+        run: python tools/verificar_encoding.py
+
+      - name: Verificar que o pacote importa
+        run: python -c "import cftvsim; print(cftvsim.__version__)"
+
+      - name: Rodar testes com cobertura
+        run: python -m pytest --cov=cftvsim --cov-report=term-missing --cov-report=xml
+
+      - name: Conferir cobertura minima
+        run: python -m coverage report --fail-under=70
+
+      - name: Prova de aceite
+        run: python tools/verificar_aceite.py
+
+      - name: O fluxo detecta as falhas plantadas
+        run: |
+          python -m cftvsim executar dados/topologia-cftv.yaml --saida exemplos/relatorio-saude.md
+          if ($LASTEXITCODE -eq 0) {
+            Write-Error "havendo camera com problema, o CLI deveria sair com 1"
+            exit 1
+          }
+          Write-Output "ok: falhas sinalizadas com codigo diferente de zero"
+
+      - name: O relatorio esta atualizado
+        run: |
+          git diff --exit-code -- exemplos/relatorio-saude.md

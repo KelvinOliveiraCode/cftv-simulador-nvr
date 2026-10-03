@@ -1,0 +1,252 @@
+# Topologia CFTV ficticia: 24 cameras IP e um NVR.
+#
+# CONTEUDO FICTICIO. Enderecos, usuarios e senhas sao inventados.
+# As 3 falhas plantadas: CAM-07 cai, CAM-13 perde quadro,
+# CAM-19 tem o relogio adiantado em 5 minutos.
+
+nvr:
+  nome: NVR-LAB-01
+  canais: 32
+  disco_tb: 8
+
+cameras:
+  - id: CAM-01
+    ip: 192.168.30.11
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: entrada-principal
+    latencia_ms: 8
+    temperatura_c: 42.9
+    poe_w: 6.0
+  - id: CAM-02
+    ip: 192.168.30.12
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: estacionamento
+    latencia_ms: 10
+    temperatura_c: 44.7
+    poe_w: 6.9
+  - id: CAM-03
+    ip: 192.168.30.13
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: recepcao
+    latencia_ms: 9
+    temperatura_c: 43.0
+    poe_w: 7.5
+  - id: CAM-04
+    ip: 192.168.30.14
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: corredor-norte
+    latencia_ms: 8
+    temperatura_c: 38.1
+    poe_w: 7.4
+  - id: CAM-05
+    ip: 192.168.30.15
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: corredor-sul
+    latencia_ms: 9
+    temperatura_c: 43.1
+    poe_w: 8.3
+  - id: CAM-06
+    ip: 192.168.30.16
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: deposito
+    latencia_ms: 17
+    temperatura_c: 42.1
+    poe_w: 8.0
+  - id: CAM-07
+    ip: 192.168.30.17
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: cai
+    local: doca
+    latencia_ms: 16
+    temperatura_c: 44.7
+    poe_w: 6.4
+  - id: CAM-08
+    ip: 192.168.30.18
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: perimetro-leste
+    latencia_ms: 12
+    temperatura_c: 40.7
+    poe_w: 7.0
+  - id: CAM-09
+    ip: 192.168.30.19
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: entrada-principal
+    latencia_ms: 12
+    temperatura_c: 39.5
+    poe_w: 8.7
+  - id: CAM-10
+    ip: 192.168.30.20
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: estacionamento
+    latencia_ms: 8
+    temperatura_c: 40.6
+    poe_w: 7.1
+  - id: CAM-11
+    ip: 192.168.30.21
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: recepcao
+    latencia_ms: 11
+    temperatura_c: 38.7
+    poe_w: 8.5
+  - id: CAM-12
+    ip: 192.168.30.22
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: corredor-norte
+    latencia_ms: 17
+    temperatura_c: 43.6
+    poe_w: 8.5
+  - id: CAM-13
+    ip: 192.168.30.23
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: perde-quadro
+    local: corredor-sul
+    latencia_ms: 12
+    temperatura_c: 41.7
+    poe_w: 8.3
+  - id: CAM-14
+    ip: 192.168.30.24
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: deposito
+    latencia_ms: 16
+    temperatura_c: 40.5
+    poe_w: 8.0
+  - id: CAM-15
+    ip: 192.168.30.25
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: doca
+    latencia_ms: 12
+    temperatura_c: 42.1
+    poe_w: 6.9
+  - id: CAM-16
+    ip: 192.168.30.26
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: perimetro-leste
+    latencia_ms: 10
+    temperatura_c: 45.9
+    poe_w: 7.6
+  - id: CAM-17
+    ip: 192.168.30.27
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: entrada-principal
+    latencia_ms: 16
+    temperatura_c: 38.3
+    poe_w: 6.2
+  - id: CAM-18
+    ip: 192.168.30.28
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: estacionamento
+    latencia_ms: 10
+    temperatura_c: 41.4
+    poe_w: 6.9
+  - id: CAM-19
+    ip: 192.168.30.29
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: relogio-errado
+    local: recepcao
+    latencia_ms: 8
+    temperatura_c: 45.4
+    poe_w: 6.7
+  - id: CAM-20
+    ip: 192.168.30.30
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: corredor-norte
+    latencia_ms: 16
+    temperatura_c: 43.8
+    poe_w: 8.4
+  - id: CAM-21
+    ip: 192.168.30.31
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: corredor-sul
+    latencia_ms: 15
+    temperatura_c: 44.2
+    poe_w: 8.2
+  - id: CAM-22
+    ip: 192.168.30.32
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: deposito
+    latencia_ms: 15
+    temperatura_c: 42.0
+    poe_w: 8.2
+  - id: CAM-23
+    ip: 192.168.30.33
+    usuario: admin
+    senha: FICTICIA
+    codec: h264
+    modo_falha: ok
+    local: doca
+    latencia_ms: 11
+    temperatura_c: 42.2
+    poe_w: 7.8
+  - id: CAM-24
+    ip: 192.168.30.34
+    usuario: admin
+    senha: FICTICIA
+    codec: h265
+    modo_falha: ok
+    local: perimetro-leste
+    latencia_ms: 12
+    temperatura_c: 43.6
+    poe_w: 6.5
